@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <margo.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -2,17 +2,8 @@
 #include <mdcs/mdcs.h>
 #include <mdcs/mdcs-service.h> 
 #include "hash_string.h"
+#include "mdcs-counter-type.h"
 #include "uthash.h"
-
-struct mdcs_counter_type_s {
-	size_t            counter_value_size; // size of the value of the counter (not counter data)
-	size_t            counter_data_size;  // size of the internal data
-	mdcs_reset_f      reset_f;            // function used to reset the counter to a given value
-	mdcs_get_value_f  get_value_f;        // function used to get the value of the counter
-	mdcs_push_one_f   push_one_f;         // function used to push a new value to a counter
-	mdcs_push_multi_f push_multi_f;       // function used to push multiple values to a counter
-	int refcount;                         // number of objects pointing to this counter type
-};
 
 struct mdcs_counter_s {
 	char* name;             // name of the counter
@@ -106,7 +97,6 @@ int mdcs_counter_register(const char* name,
         mdcs_counter_type_t type, size_t buffer_size, 
         mdcs_counter_t* counter) {
 	
-	size_t len = strlen(name);
 	mdcs_counter_t c;
 	int ret;
 
@@ -181,7 +171,7 @@ int mdcs_counter_digest(mdcs_counter_t counter)
 		if(counter->t->push_multi_f != NULL) {
 			counter->t->push_multi_f(counter->counter_data, counter->buffer, counter->num_buffered);
 		} else {
-			int i;
+			unsigned i;
 			char* value = counter->buffer;
 			for(i=0; i < counter->num_buffered; i++) {
 				counter->t->push_one_f(counter->counter_data, value);

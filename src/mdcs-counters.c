@@ -1,5 +1,7 @@
+#include <mdcs/mdcs-service.h>
 #include <mdcs/mdcs-counters.h>
 #include <mdcs/mdcs.h>
+#include "mdcs-counter-type.h"
 
 ////////////////////////////////////////////////////////////////////////////
 // Simple double value counter, tracks the last pushed value
@@ -38,10 +40,10 @@ static void last_double_push_multi(
 struct mdcs_counter_type_s MDCS_COUNTER_LAST_DOUBLE_S = {
    	.counter_value_size = sizeof(mdcs_counter_last_double_t), 
 	.counter_data_size  = sizeof(mdcs_counter_last_double_internal),
-    .reset_f            = last_double_reset,
-    .get_value_f        = last_double_get_value,
-    .push_one_f         = last_double_push_one,
-    .push_multi_f       = last_double_push_multi,
+    .reset_f            = (mdcs_reset_f)last_double_reset,
+    .get_value_f        = (mdcs_get_value_f)last_double_get_value,
+    .push_one_f         = (mdcs_push_one_f)last_double_push_one,
+    .push_multi_f       = (mdcs_push_multi_f)last_double_push_multi,
     .refcount           = -1
 };
 
@@ -82,10 +84,10 @@ static void last_int64_push_multi(
 struct mdcs_counter_type_s MDCS_COUNTER_LAST_INT64_S = {
    	.counter_value_size = sizeof(mdcs_counter_last_int64_t), 
 	.counter_data_size  = sizeof(mdcs_counter_last_int64_internal),
-    .reset_f            = last_int64_reset,
-    .get_value_f        = last_int64_get_value,
-    .push_one_f         = last_int64_push_one,
-    .push_multi_f       = last_int64_push_multi,
+    .reset_f            = (mdcs_reset_f)last_int64_reset,
+    .get_value_f        = (mdcs_get_value_f)last_int64_get_value,
+    .push_one_f         = (mdcs_push_one_f)last_int64_push_one,
+    .push_multi_f       = (mdcs_push_multi_f)last_int64_push_multi,
     .refcount           = -1
 };
 
@@ -138,10 +140,10 @@ static void stat_double_push_one(
 struct mdcs_counter_type_s MDCS_COUNTER_STAT_DOUBLE_S = {
    	.counter_value_size = sizeof(mdcs_counter_stat_double_t), 
 	.counter_data_size  = sizeof(mdcs_counter_stat_double_internal),
-    .reset_f            = stat_double_reset,
-    .get_value_f        = stat_double_get_value,
-    .push_one_f         = stat_double_push_one,
-    .push_multi_f       = NULL,
+    .reset_f            = (mdcs_reset_f)stat_double_reset,
+    .get_value_f        = (mdcs_get_value_f)stat_double_get_value,
+    .push_one_f         = (mdcs_push_one_f)stat_double_push_one,
+    .push_multi_f       = (mdcs_push_multi_f)NULL,
     .refcount           = -1
 };
 
@@ -194,10 +196,10 @@ static void stat_int64_push_one(
 struct mdcs_counter_type_s MDCS_COUNTER_STAT_INT64_S = {
    	.counter_value_size = sizeof(mdcs_counter_stat_int64_t), 
 	.counter_data_size  = sizeof(mdcs_counter_stat_int64_internal),
-    .reset_f            = stat_int64_reset,
-    .get_value_f        = stat_int64_get_value,
-    .push_one_f         = stat_int64_push_one,
-    .push_multi_f       = NULL,
+    .reset_f            = (mdcs_reset_f)stat_int64_reset,
+    .get_value_f        = (mdcs_get_value_f)stat_int64_get_value,
+    .push_one_f         = (mdcs_push_one_f)stat_int64_push_one,
+    .push_multi_f       = (mdcs_push_multi_f)NULL,
     .refcount           = -1
 };
 
@@ -209,4 +211,3 @@ mdcs_counter_type_t MDCS_COUNTER_LAST_INT64  = &MDCS_COUNTER_LAST_INT64_S;
 mdcs_counter_type_t MDCS_COUNTER_STAT_DOUBLE = &MDCS_COUNTER_STAT_DOUBLE_S;
 mdcs_counter_type_t MDCS_COUNTER_STAT_INT64  = &MDCS_COUNTER_STAT_INT64_S;
 
-#endif
