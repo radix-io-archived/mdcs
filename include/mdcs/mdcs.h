@@ -1,6 +1,13 @@
 #ifndef __MOCHI_MDCS_H
 #define __MOCHI_MDCS_H
 
+#include <stdlib.h>
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MDCS_SUCCESS 0
 #define MDCS_ERROR  (-1)
 #define MDCS_TRUE    1
@@ -52,5 +59,9 @@ int mdcs_set_error_printer(mdcs_printer_f fun);
  * \return MDCS_SUCCESS on success, MDCS_ERROR otherwise.
  */
 int mdcs_set_warning_printer(mdcs_printer_f fun);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
