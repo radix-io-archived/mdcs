@@ -53,6 +53,7 @@ int mdcs_finalize()
 		HASH_DEL(g_mdcs_counters.counter_hash, current_counter); 
 		free(current_counter->name);
 		mdcs_counter_type_destroy(current_counter->t);
+		free(current_counter->counter_data);
 		if(current_counter->buffer != NULL) free(current_counter->buffer);
 		free(current_counter);
 	}
@@ -110,6 +111,7 @@ int mdcs_counter_register(const char* name,
 	newcounter->name = strdup(name);
 	newcounter->id = id;
 	newcounter->t = type;
+	newcounter->counter_data = malloc(type->counter_data_size);
 	newcounter->buffer = NULL;
 	newcounter->num_buffered = 0;
 	newcounter->max_buffer_size = 0;

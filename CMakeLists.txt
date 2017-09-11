@@ -38,4 +38,4 @@ include_directories(${CMAKE_BINARY_DIR})
 # Set subdirectories for the compilation process
 #-----------------------------------------------------------#
 add_subdirectory(lib)
-
+add_subdirectory(test)
