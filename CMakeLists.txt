@@ -39,3 +39,6 @@ include_directories(${CMAKE_BINARY_DIR})
 #-----------------------------------------------------------#
 add_subdirectory(lib)
 add_subdirectory(test)
+
+install(FILES "${CMAKE_BINARY_DIR}/lib/libmdcs.a" DESTINATION lib)
+install(DIRECTORY "include/mdcs" DESTINATION include)
