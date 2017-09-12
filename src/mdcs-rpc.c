@@ -1,6 +1,6 @@
-#include "rpc.h"
-#include "rpc-types.h"
-#include "mdcs-data.h"
+#include "mdcs-rpc.h"
+#include "mdcs-rpc-types.h"
+#include "mdcs-global-data.h"
 
 extern mdcs_t g_mdcs;
 

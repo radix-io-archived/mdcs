@@ -1,9 +1,9 @@
 #include <mdcs/mdcs.h>
 #include <assert.h>
-#include "mdcs-data.h"
-#include "rpc-types.h"
-#include "rpc.h"
-#include "hash_string.h"
+#include "mdcs-global-data.h"
+#include "mdcs-rpc-types.h"
+#include "mdcs-rpc.h"
+#include "mdcs-hash-string.h"
 
 extern mdcs_t g_mdcs;
 

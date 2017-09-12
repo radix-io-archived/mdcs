@@ -1,10 +1,10 @@
 #include <string.h>
 #include <mdcs/mdcs.h>
-#include "hash_string.h"
+#include "mdcs-hash-string.h"
 #include "mdcs-counter-type.h"
-#include "mdcs-data.h"
-#include "rpc.h"
-#include "rpc-types.h"
+#include "mdcs-global-data.h"
+#include "mdcs-rpc.h"
+#include "mdcs-rpc-types.h"
 #include "uthash.h"
 
 struct mdcs_counter_s {

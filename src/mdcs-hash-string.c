@@ -1,4 +1,4 @@
-#include "hash_string.h"
+#include "mdcs-hash-string.h"
 
 uint64_t mdcs_hash_string(const char *string)
 {
