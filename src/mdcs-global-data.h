@@ -1,5 +1,10 @@
-#ifndef __MDCS_DATA_H
-#define __MDCS_DATA_H
+/*
+ * Copyright (c) 2017 UChicago Argonne, LLC
+ *
+ * See COPYRIGHT in top-level directory.
+ */
+#ifndef __MDCS_GLOBAL_DATA_H
+#define __MDCS_GLOBAL_DATA_H
 
 #include <mdcs/mdcs.h>
 

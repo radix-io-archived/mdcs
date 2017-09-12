@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2017 UChicago Argonne, LLC
+ *
+ * See COPYRIGHT in top-level directory.
+ */
 #include "mdcs-hash-string.h"
 
 uint64_t mdcs_hash_string(const char *string)

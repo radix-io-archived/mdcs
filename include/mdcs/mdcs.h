@@ -1,5 +1,10 @@
-#ifndef __MOCHI_MDCS_H
-#define __MOCHI_MDCS_H
+/*
+ * Copyright (c) 2017 UChicago Argonne, LLC
+ *
+ * See COPYRIGHT in top-level directory.
+ */
+#ifndef __MDCS_H
+#define __MDCS_H
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -41,6 +46,13 @@ typedef void (*mdcs_printer_f)(const char*);
  */
 int mdcs_init(margo_instance_id mid, int listening);
 
+/**
+ * Checks if MDCS is initialized. Flag will be set to 1
+ * if it initialize, 0 otherwise.
+ *
+ * \param[out] flag Whether MDCS is initialized or not.
+ * \return MDCS_SUCCESS on success, MDCS_ERROR otherwise.
+ */
 int mdcs_initialized(int* flag);
 
 /**
@@ -177,7 +189,7 @@ int mdcs_remote_counter_get_id(const char* name, mdcs_counter_id_t* counter);
  * Fetches the value of a counter from a remote address.
  * 
  * \param[in] addr Server address from which to fetch the counter value.
- * \param[in] counter Counter from which to fetch the value.
+ * \param[in] counter ID of the counter from which to fetch the value.
  * \param[out] value Pointer to a buffer where to store the value.
  * \return MDCS_SUCCESS on success, MDCS_ERROR otherwise.
  */
@@ -187,7 +199,7 @@ int mdcs_remote_counter_fetch(hg_addr_t addr, mdcs_counter_id_t counter, void* v
  * Resets a counter at a remote address.
  * 
  * \param[in] addr Address of the server in which to reset the counter.
- * \param[in] counter Counter to reset.
+ * \param[in] counter ID of the counter to reset.
  * \return MDCS_SUCCESS on success, MDCS_ERROR otherwise.
  */
 int mdcs_remote_counter_reset(hg_addr_t addr, mdcs_counter_id_t counter);

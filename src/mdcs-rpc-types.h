@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2017 UChicago Argonne, LLC
+ *
+ * See COPYRIGHT in top-level directory.
+ */
 #ifndef __MDCS_RPC_TYPES_H
 #define __MDCS_RPC_TYPES_H
 

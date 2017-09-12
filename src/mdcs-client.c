@@ -1,5 +1,10 @@
-#include <mdcs/mdcs.h>
+/*
+ * Copyright (c) 2017 UChicago Argonne, LLC
+ *
+ * See COPYRIGHT in top-level directory.
+ */
 #include <assert.h>
+#include <mdcs/mdcs.h>
 #include "mdcs-global-data.h"
 #include "mdcs-rpc-types.h"
 #include "mdcs-rpc.h"

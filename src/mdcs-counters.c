@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2017 UChicago Argonne, LLC
+ *
+ * See COPYRIGHT in top-level directory.
+ */
 #include <mdcs/mdcs.h>
 #include <mdcs/mdcs-counters.h>
 #include "mdcs-counter-type.h"

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2017 UChicago Argonne, LLC
+ *
+ * See COPYRIGHT in top-level directory.
+ */
 #include "mdcs-rpc.h"
 #include "mdcs-rpc-types.h"
 #include "mdcs-global-data.h"

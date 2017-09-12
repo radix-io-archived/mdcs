@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2017 UChicago Argonne, LLC
+ *
+ * See COPYRIGHT in top-level directory.
+ */
 #ifndef __MDCS_HASH_STRING
 #define __MDCS_HASH_STRING
 
