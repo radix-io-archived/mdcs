@@ -75,7 +75,7 @@ cleanup:
 		MDCS_PRINT_WARNING("Coult not free RPC output");
 	}
 
-	ret = margo_destroy(handle);
+	ret = margo_destroy(g_mdcs->mid, handle);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_WARNING("Could not destroy RPC handle");
 	}
@@ -124,7 +124,7 @@ cleanup:
 		MDCS_PRINT_WARNING("Could not free output");
 	}
 
-	ret = margo_destroy(handle);
+	ret = margo_destroy(g_mdcs->mid, handle);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_WARNING("Could not free RPC handle");
 	}

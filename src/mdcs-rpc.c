@@ -111,7 +111,7 @@ cleanup:
 		result = ret;
 	}
 
-	ret = margo_destroy(handle);
+	ret = margo_destroy(g_mdcs->mid, handle);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_WARNING("Could not destroy RPC handle");
 		result = ret;
@@ -163,7 +163,7 @@ cleanup:
 		result = ret;
 	}
 
-	ret = margo_destroy(handle);
+	ret = margo_destroy(g_mdcs->mid, handle);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_WARNING("Could not destroy RPC handle");
 		result = ret;

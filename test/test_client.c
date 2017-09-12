@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 
 
 		margo_free_output(h,&resp);
-		margo_destroy(h);
+		margo_destroy(mid, h);
 	}
 
 	/* free the address */
