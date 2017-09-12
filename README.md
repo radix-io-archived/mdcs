@@ -42,20 +42,29 @@ MDCS can be used as follows within a server to add a counter and manipulate it:
 mdcs_initialize(mid, MDCS_TRUE); // initialize with a margo instance
 
 mdcs_counter_t mycnt = MDCS_COUNTER_NULL; // counter handle
+mdcs_counter_t mystat = MDCS_COUNTER_NULL;
 
 // register a new counter, of type MDCS_COUNTER_LAST_INT64, with no buffer
 mdcs_counter_register("example:mycounter", MDCS_COUNTER_LAST_INT64, 0, &mycnt);
+// register a new counter, of type MDCS_COUNTER_STAT_DOUBLE, with 10-element buffer
+mdcs_counter_register("example:mystat", MDCS_COUNTER_STAT_DOUBLE, 10, &mystat);
 
 // push a new value to a counter
 int64_t value = 42;
 mdcs_counter_push(mycnt, &value);
 
+double x = 0.34;
+mdcs_counter_push(mystat, &x);
+
 // force the buffered values to be "digested"
-mdcs_counter_digest(mycnt);
+mdcs_counter_digest(mystat);
 
 // get the current content of the counter
 int64_t stored;
 mdcs_counter_value(mycnt, &stored);
+
+mdcs_counter_stat_double_t statistics;
+mdcs_counter_value(mystat, &statistics);
 
 mdcs_finalize(); // finalize MDCS
 ```
@@ -71,11 +80,11 @@ mdcs_initialize(mid, MDCS_FALSE); // initialize with a margo instance
 mdcs_counter_id_t cid; // reference to a remote counter
 
 // get the id of the counter
-mdcs_remote_counter_get_id("example:mycounter", &cid);
+mdcs_remote_counter_get_id("example:mystat", &cid);
 
 // get the current value
-int64_t value;
-mdcs_remote_counter_fetch(cid, &value, sizeof(value));
+mdcs_counter_stat_double_t statistics;
+mdcs_remote_counter_fetch(cid, &statistics, sizeof(statistics));
 
 // reset the counter
 mdcs_remote_counter_reset(cid);
