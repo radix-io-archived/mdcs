@@ -1,6 +1,5 @@
-#include <mdcs/mdcs-service.h>
-#include <mdcs/mdcs-counters.h>
 #include <mdcs/mdcs.h>
+#include <mdcs/mdcs-counters.h>
 #include "mdcs-counter-type.h"
 
 ////////////////////////////////////////////////////////////////////////////

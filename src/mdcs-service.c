@@ -1,8 +1,10 @@
 #include <string.h>
 #include <mdcs/mdcs.h>
-#include <mdcs/mdcs-service.h> 
 #include "hash_string.h"
 #include "mdcs-counter-type.h"
+#include "mdcs-data.h"
+#include "rpc.h"
+#include "rpc-types.h"
 #include "uthash.h"
 
 struct mdcs_counter_s {
@@ -16,41 +18,43 @@ struct mdcs_counter_s {
 	UT_hash_handle hh;      // counters are placed in a hash by id
 };
 
-struct mdcs_data_s {
-	mdcs_counter_t counter_hash;     // hash of counters by id
-};
-
 static void dummy_printer(const char* s) {}
 
-static int g_mdcs_initialized = 0;
-static struct mdcs_data_s g_mdcs_counters; // global structure to record MDCS data
 mdcs_printer_f mdcs_print_error   = dummy_printer; // error printer
 mdcs_printer_f mdcs_print_warning = dummy_printer; // warning printer
 
+mdcs_t g_mdcs = MDCS_NULL;
+
 int mdcs_init(margo_instance_id mid, int listening)
 {
-	if(g_mdcs_initialized == 1) return MDCS_ERROR;
+	mdcs_t newmdcs = (mdcs_t)malloc(sizeof(struct mdcs_data_s));
+	if(newmdcs == NULL) return MDCS_ERROR;
 
-	g_mdcs_counters.counter_hash = NULL;
-	g_mdcs_initialized = 1;
+	newmdcs->counter_hash = NULL;
+	newmdcs->mid = mid;
+
+	g_mdcs = newmdcs;
+
+	g_mdcs->rpc_fetch_id = MARGO_REGISTER(mid, "mdcs_fetch_counter", 
+							get_counter_in_t, get_counter_out_t, mdcs_rpc_get_counter);
+	g_mdcs->rpc_reset_id = MARGO_REGISTER(mid, "mdcs_reset_counter",
+							reset_counter_in_t, reset_counter_out_t, mdcs_rpc_reset_counter);
 
 	return MDCS_SUCCESS;
 }
 
 int mdcs_initialized(int* flag)
 {
-	*flag = g_mdcs_initialized;
+	*flag = (g_mdcs != MDCS_NULL);
 	return MDCS_SUCCESS;
 }
 
 int mdcs_finalize()
 {
-	if(g_mdcs_initialized == 0) return MDCS_ERROR;
-
 	mdcs_counter_t current_counter, tmp;
 
-	HASH_ITER(hh, g_mdcs_counters.counter_hash, current_counter, tmp) {
-		HASH_DEL(g_mdcs_counters.counter_hash, current_counter); 
+	HASH_ITER(hh, g_mdcs->counter_hash, current_counter, tmp) {
+		HASH_DEL(g_mdcs->counter_hash, current_counter); 
 		free(current_counter->name);
 		mdcs_counter_type_destroy(current_counter->t);
 		free(current_counter->counter_data);
@@ -58,7 +62,8 @@ int mdcs_finalize()
 		free(current_counter);
 	}
 
-	g_mdcs_initialized = 0;
+	free(g_mdcs);
+	g_mdcs = MDCS_NULL;
 
 	return MDCS_SUCCESS;
 }
@@ -120,12 +125,13 @@ int mdcs_counter_register(const char* name,
 		newcounter->buffer = malloc(buffer_size*(type->counter_value_size));
 	}
 
-	HASH_ADD(hh, g_mdcs_counters.counter_hash, id, sizeof(uint64_t), newcounter);
+	HASH_ADD(hh, g_mdcs->counter_hash, id, sizeof(uint64_t), newcounter);
 
 	ret = mdcs_counter_find_by_id(id, &c);
 	if(ret != MDCS_SUCCESS) return MDCS_ERROR;
 
 	*counter = newcounter;
+	mdcs_counter_reset(newcounter);
 
 	return MDCS_SUCCESS;
 }
@@ -133,7 +139,7 @@ int mdcs_counter_register(const char* name,
 int mdcs_counter_find_by_id(uint64_t id, mdcs_counter_t* counter)
 {
 	mdcs_counter_t c;
-	HASH_FIND(hh, g_mdcs_counters.counter_hash, &id, sizeof(uint64_t), c);
+	HASH_FIND(hh, g_mdcs->counter_hash, &id, sizeof(uint64_t), c);
     if(c == NULL) return MDCS_ERROR;
 	*counter = c;
 	return MDCS_SUCCESS;

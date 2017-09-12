@@ -1,7 +1,9 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <margo.h>
-#include <mdcs/mdcs-service.h>
+#include <mdcs/mdcs.h>
 #include <mdcs/mdcs-counters.h>
 #include "types.h"
 
@@ -11,6 +13,7 @@ static const int TOTAL_RPCS = 16;
 static int num_rpcs = 0;
 
 static mdcs_counter_t mycounter = MDCS_COUNTER_NULL;
+static mdcs_counter_t mystats   = MDCS_COUNTER_NULL;
 
 /* 
  * hello_world function to expose as an RPC.
@@ -28,6 +31,8 @@ DECLARE_MARGO_RPC_HANDLER(sum)
  */
 int main(int argc, char** argv)
 {
+	srand(time(NULL));
+
 	/* Initialize Margo */
 	margo_instance_id mid = margo_init("bmi+tcp://localhost:1234", MARGO_SERVER_MODE, 0, 0);
     assert(mid);
@@ -40,13 +45,9 @@ int main(int argc, char** argv)
 	ret = mdcs_init(mid, MDCS_TRUE);
 	assert(ret == MDCS_SUCCESS);
 
-	ret = mdcs_counter_register("example:mycounter", MDCS_COUNTER_LAST_INT64, 0, &mycounter); 
+	mdcs_counter_register("example:mycounter", MDCS_COUNTER_LAST_INT64, 0, &mycounter); 
+	mdcs_counter_register("example:mystats", MDCS_COUNTER_STAT_DOUBLE, 0, &mystats);
 
-	/* NOTE: there isn't anything else for the server to do at this point
-     * except wait for itself to be shut down.  The
-     * margo_wait_for_finalize() call here yields to let Margo drive
-     * progress until that happens.
-	 */
 	margo_wait_for_finalize(mid);
 
 	mdcs_finalize();
@@ -79,8 +80,16 @@ hg_return_t sum(hg_handle_t h)
 	assert(r == MDCS_SUCCESS);
 	int64_t stored = 0;
 	r = mdcs_counter_value(mycounter, &stored);
-	printf("Stored counter value is %ld\n", stored);
-	assert(r == MDCS_SUCCESS);
+
+	int i;
+	for(i=0; i<20; i++) {
+		double random_value;
+		random_value = (double)rand()/RAND_MAX*2.0-1.0; //float in range -1 to 1
+		mdcs_counter_push(mystats, &random_value);
+	}
+
+	r = mdcs_counter_value(mycounter, &stored);
+    printf("Stored counter value is %ld\n", stored);
 
 	ret = margo_respond(mid, h, &out);
 	assert(ret == HG_SUCCESS);
