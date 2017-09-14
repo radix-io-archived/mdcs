@@ -222,6 +222,12 @@ It is also possible now for a client to get the value of the counter by
 calling `mdcs_remote_counter_fetch`. Remember that the value must have the type
 `range_tracker_value_t`.
 
+Finally, one has to free the counter type before finalizing MDCS:
+
+```c
+mdcs_counter_type_destroy(range_tracker_type);
+```
+
 Note to potential contributors
 ==============================
 
