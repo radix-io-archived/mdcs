@@ -110,16 +110,16 @@ to better understand how MDCS works, one has to make the distinction between
  * The type of data read when getting the value of a counter ("value type")
 
 For example in the MDCS_COUNTER_STAT_DOUBLE counter, the item type is `double`,
-while the data type and the value type are of type mdcs_counter_stat_double_t,
+while the data type and the value type are of type `mdcs_counter_stat_double_t`,
 the definition of which is found in `mdcs/mdcs-counters.h`.
 
-Let's define a new counter type called "range tracker", which will keept track
+Let's define a new counter type called "range tracker", which will keep track
 of the difference between the minimum and the maximum values that have been
 pushed to it. The item, data, and value types of this counter will be as follows:
- * The item type will be int32_t
- * The data type will be a structure with the min and max as int32_t
- * The value type will be an uint32_t (the value is necessarily positive and
-should be able to represent the difference between a very large int32_t and a very small one)
+ * The item type will be `int32_t`
+ * The data type will be a structure with the min and max as `int32_t`
+ * The value type will be an `uint32_t` (the value is necessarily positive and
+should be able to represent the difference between a very large `int32_t` and a very small one)
 
 We define our types as follows in `range-tracker.h`:
 
@@ -133,10 +133,10 @@ typedef uint32_t range_tracker_value_t;
 ```
 
 Now we also need 4 functions to build our counter types:
- * A reset function to reset the counter's internal value
- * A push_one function to push an item to the counter
- * A push_multi function to push multiple items to the counter
- * A get_value function to get the current value of the counter
+ * A `reset` function to reset the counter's internal value
+ * A `push_one` function to push an item to the counter
+ * A `push_multi` function to push multiple items to the counter
+ * A `get_value` function to get the current value of the counter
 
 We declare their prototype in the header file `range-tracker.h`:
 
@@ -189,8 +189,8 @@ void range_tracker_push_multi(range_tracker_data_t* data, range_tracker_item_t* 
 }
 ```
 
-Note that in our implementation of push_multi, we simply do what an iteration
-over push_one would do. But one could think of counter types for which there is
+Note that in our implementation of `push_multi`, we simply do a `for` loop
+over what `push_one` would do. But one could think of counter types for which there is
 a better way of handling items in batches than iterating through them one by one.
 
 Let's now create our type in the server:
