@@ -3,6 +3,7 @@
 #include <margo.h>
 #include <mdcs/mdcs.h>
 #include <mdcs/mdcs-counters.h>
+#include "range-tracker.h"
 #include "types.h"
 
 /* Main function. */
@@ -20,9 +21,10 @@ int main(int argc, char** argv)
 	hg_addr_t svr_addr;
 	margo_addr_lookup(mid, "bmi+tcp://localhost:1234", &svr_addr);
 
-	mdcs_counter_id_t cid1, cid2;
+	mdcs_counter_id_t cid1, cid2, cid3;
 	mdcs_remote_counter_get_id("example:mycounter", &cid1);
 	mdcs_remote_counter_get_id("example:mystats", &cid2);
+	mdcs_remote_counter_get_id("example:myrange", &cid3);
 
 	int i;
 	sum_in_t args;
@@ -43,11 +45,13 @@ int main(int argc, char** argv)
 		mdcs_remote_counter_fetch(svr_addr, cid1, &counter_value, sizeof(counter_value));
 		mdcs_counter_stat_double_t stats;
 		mdcs_remote_counter_fetch(svr_addr, cid2, &stats, sizeof(stats));
+		range_tracker_value_t range;
+		mdcs_remote_counter_fetch(svr_addr, cid3, &range, sizeof(range));
 
 		printf("Counter value is %ld\n", counter_value);
 		printf("Stats: count=%ld min=%lf, max=%lf, avg=%lf, var=%lf, last=%lf\n",
 			stats.count, stats.min, stats.max, stats.avg, stats.var, stats.last);
-
+		printf("Range value is %d\n", range);
 
 		margo_free_output(h,&resp);
 		margo_destroy(mid, h);

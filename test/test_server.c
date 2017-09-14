@@ -6,9 +6,11 @@
 #include <mdcs/mdcs.h>
 #include <mdcs/mdcs-counters.h>
 #include "types.h"
+#include "range-tracker.h"
 
 static mdcs_counter_t mycounter = MDCS_COUNTER_NULL;
 static mdcs_counter_t mystats   = MDCS_COUNTER_NULL;
+static mdcs_counter_t myrange   = MDCS_COUNTER_NULL;
 
 /* 
  * hello_world function to expose as an RPC.
@@ -40,10 +42,24 @@ int main(int argc, char** argv)
 	ret = mdcs_init(mid, MDCS_TRUE);
 	assert(ret == MDCS_SUCCESS);
 
+	mdcs_counter_type_t range_tracker_type = MDCS_COUNTER_TYPE_NULL;
+
+	mdcs_counter_type_create(sizeof(range_tracker_data_t),
+	                         sizeof(range_tracker_value_t),
+	                         sizeof(range_tracker_item_t),
+	                         (mdcs_reset_f)range_tracker_reset,
+	                         (mdcs_push_one_f)range_tracker_push_one,
+	                         (mdcs_push_multi_f)range_tracker_push_multi,
+	                         (mdcs_get_value_f)range_tracker_get_value,
+	                         &range_tracker_type);
+
+	mdcs_counter_register("example:myrange", range_tracker_type, 0, &myrange);
 	mdcs_counter_register("example:mycounter", MDCS_COUNTER_LAST_INT64, 0, &mycounter); 
 	mdcs_counter_register("example:mystats", MDCS_COUNTER_STAT_DOUBLE, 0, &mystats);
 
 	margo_wait_for_finalize(mid);
+
+	mdcs_counter_type_destroy(range_tracker_type);
 
 	mdcs_finalize();
 
@@ -74,6 +90,13 @@ hg_return_t sum(hg_handle_t h)
 	assert(r == MDCS_SUCCESS);
 	int64_t stored = 0;
 	r = mdcs_counter_value(mycounter, &stored);
+
+	int32_t v1 = in.x;
+	int32_t v2 = in.y;
+	int32_t v3 = out.ret;
+	mdcs_counter_push(myrange, &v1);
+	mdcs_counter_push(myrange, &v2);
+	mdcs_counter_push(myrange, &v3);
 
 	int i;
 	for(i=0; i<20; i++) {
