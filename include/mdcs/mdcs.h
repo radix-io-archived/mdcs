@@ -85,15 +85,16 @@ int mdcs_set_warning_printer(mdcs_printer_f fun);
  * counter, the function used to push a value, a function used to
  * push several values at once, and the function used o read the current value.
  *
- * \param[in] counterdatasize Size of the internal data structure of the counter.
- * \param[in] valuesize Size of the value of the counter.
+ * \param[in] internalsize Size of the internal data structure of the counter.
+ * \param[in] valuesize Size of the value returned when reading the counter.
+ * \param[in] itemsize Size of items pushed to the counter.
  * \param[in] reset_fn Function used to reset the counter.
  * \param[in] push_one_fn Function used to push new values to the counter.
  * \param[in] push_multi_fn Function used to push multiple values to the counter.
  * \param[in] get_value_fn Function used to read the current value.
  * \return MDCS_SUCCESS on success, MDCS_ERROR otherwise.
  */
-int mdcs_counter_type_create(size_t counterdatasize, size_t valuesize, 
+int mdcs_counter_type_create(size_t internalsize, size_t valuesize, size_t itemsize,
         mdcs_reset_f reset_fn, mdcs_push_one_f push_one_fn, 
         mdcs_push_multi_f push_multi_fn, mdcs_get_value_f get_value_fn,
         mdcs_counter_type_t* type);

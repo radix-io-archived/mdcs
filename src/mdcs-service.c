@@ -82,7 +82,7 @@ int mdcs_finalize()
 	return MDCS_SUCCESS;
 }
 
-int mdcs_counter_type_create(size_t counterdatasize, size_t valuesize, 
+int mdcs_counter_type_create(size_t internalsize, size_t valuesize, size_t itemsize,
         mdcs_reset_f reset_fn, mdcs_push_one_f push_one_fn, 
         mdcs_push_multi_f push_multi_fn, mdcs_get_value_f get_value_fn,
         mdcs_counter_type_t* type) 
@@ -98,8 +98,9 @@ int mdcs_counter_type_create(size_t counterdatasize, size_t valuesize,
 		return MDCS_ERROR;
 	}
 
+	newtype->counter_item_size  = itemsize;
 	newtype->counter_value_size = valuesize;
-    newtype->counter_data_size  = counterdatasize; 
+    newtype->counter_data_size  = internalsize; 
     newtype->reset_f            = reset_fn;
     newtype->get_value_f        = get_value_fn;
     newtype->push_one_f         = push_one_fn;
@@ -162,7 +163,7 @@ int mdcs_counter_register(const char* name,
 
 	if(buffer_size != 0) {
 		newcounter->max_buffer_size = buffer_size;
-		newcounter->buffer = malloc(buffer_size*(type->counter_value_size));
+		newcounter->buffer = malloc(buffer_size*(type->counter_item_size));
 		if(newcounter->buffer == NULL) {
 			MDCS_PRINT_ERROR("Could not allocate memory for counter's buffer");
 			free(newcounter);
@@ -229,8 +230,8 @@ int mdcs_counter_push(mdcs_counter_t counter, const void* value)
 	}
 
 	if(counter->max_buffer_size != 0) {
-		char* p = (char*)(counter->buffer) + (counter->num_buffered)*(counter->t->counter_value_size);
-		memcpy(p, value, counter->t->counter_value_size);
+		char* p = (char*)(counter->buffer) + (counter->num_buffered)*(counter->t->counter_item_size);
+		memcpy(p, value, counter->t->counter_item_size);
 		counter->num_buffered += 1;
 	} else {
 		counter->t->push_one_f(counter->counter_data, value);
@@ -259,7 +260,7 @@ int mdcs_counter_digest(mdcs_counter_t counter)
 			char* value = counter->buffer;
 			for(i=0; i < counter->num_buffered; i++) {
 				counter->t->push_one_f(counter->counter_data, value);
-				value += counter->t->counter_value_size;
+				value += counter->t->counter_item_size;
 			}
 		}
 	}

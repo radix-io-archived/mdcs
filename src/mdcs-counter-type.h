@@ -9,7 +9,8 @@
 #include <stdint.h>
 
 struct mdcs_counter_type_s {
-	size_t            counter_value_size; // size of the value of the counter (not counter data)
+	size_t            counter_item_size;  // size of items pushed into the counter
+	size_t            counter_value_size; // size of the values read from the counter 
 	size_t            counter_data_size;  // size of the internal data
 	mdcs_reset_f      reset_f;            // function used to reset the counter to a given value
 	mdcs_get_value_f  get_value_f;        // function used to get the value of the counter
