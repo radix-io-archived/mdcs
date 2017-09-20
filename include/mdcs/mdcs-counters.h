@@ -17,9 +17,13 @@ extern mdcs_counter_type_t MDCS_COUNTER_LAST_INT64;
 extern mdcs_counter_type_t MDCS_COUNTER_STAT_DOUBLE;
 extern mdcs_counter_type_t MDCS_COUNTER_STAT_INT64;
 
-typedef double mdcs_counter_last_double_t;
+typedef double mdcs_counter_last_double_item_t;
+typedef double mdcs_counter_last_double_value_t;
 
-typedef int64_t mdcs_counter_last_int64_t;
+typedef int64_t mdcs_counter_last_int64_item_t;
+typedef int64_t mdcs_counter_last_int64_value_t;
+
+typedef double mdcs_counter_stat_double_item_t;
 
 typedef struct {
 	size_t count;
@@ -28,7 +32,9 @@ typedef struct {
 	double avg;
 	double var;
 	double last;
-} mdcs_counter_stat_double_t;
+} mdcs_counter_stat_double_value_t;
+
+typedef int64_t mdcs_counter_stat_int64_item_t;
 
 typedef struct {
 	size_t  count;
@@ -37,7 +43,7 @@ typedef struct {
 	double  avg;
 	double  var;
 	int64_t last;
-} mdcs_counter_stat_int64_t;
+} mdcs_counter_stat_int64_value_t;
 
 #ifdef __cplusplus
 }

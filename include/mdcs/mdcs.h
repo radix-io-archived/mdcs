@@ -85,22 +85,24 @@ int mdcs_set_warning_printer(mdcs_printer_f fun);
  * counter, the function used to push a value, a function used to
  * push several values at once, and the function used o read the current value.
  *
- * \param[in] internalsize Size of the internal data structure of the counter.
+ * \param[in] itemsize Size of item pushed to the counter.
  * \param[in] valuesize Size of the value returned when reading the counter.
- * \param[in] itemsize Size of items pushed to the counter.
+ * \param[in] datasize Size of the internal data structure of the counter.
  * \param[in] reset_fn Function used to reset the counter.
  * \param[in] push_one_fn Function used to push new values to the counter.
  * \param[in] push_multi_fn Function used to push multiple values to the counter.
+ *            This parameter is optional and NULL can be passed.
  * \param[in] get_value_fn Function used to read the current value.
+ * \param[out] type Resulting counter type.
  * \return MDCS_SUCCESS on success, MDCS_ERROR otherwise.
  */
-int mdcs_counter_type_create(size_t internalsize, size_t valuesize, size_t itemsize,
+int mdcs_counter_type_create(size_t itemsize, size_t valuesize, size_t datasize,
         mdcs_reset_f reset_fn, mdcs_push_one_f push_one_fn, 
         mdcs_push_multi_f push_multi_fn, mdcs_get_value_f get_value_fn,
         mdcs_counter_type_t* type);
 
 /**
- * Destroyes a counter type. This function only destroyes the counter type
+ * Destroys a counter type. This function only destroyes the counter type
  * if no existing counter use this type. Hence it is safe to destroy all counter
  * types right after having created counters of that type.
  *
@@ -115,7 +117,8 @@ int mdcs_counter_type_destroy(mdcs_counter_type_t type);
  *
  * \param[in] name Name of the counter.
  * \param[in] type Type of counter.
- * \param[in] buffer_size Size of the buffer to cache counter values (can be 0).
+ * \param[in] buffer_size Size of the buffer (in number of items)
+ *             to cache counter values (can be 0).
  * \param[out] counter Newly created counter.
  * \return MDCS_SUCCESS on success, MDCS_ERROR otherwise.
  */
@@ -142,7 +145,9 @@ int mdcs_counter_push(mdcs_counter_t counter, const void* value);
 int mdcs_counter_digest(mdcs_counter_t counter);
 
 /**
- * Get the current value of the counter.
+ * Get the current value of the counter. If the counter has a buffer,
+ * this function will automatically trigger an mdcs_counter_digest,
+ * so there is no need for the user to do it before.
  * 
  * \param[in] counter Counter from which to retrieve the value.
  * \param[out] value Pointer to the location where the value should be placed.
@@ -192,6 +197,7 @@ int mdcs_remote_counter_get_id(const char* name, mdcs_counter_id_t* counter);
  * \param[in] addr Server address from which to fetch the counter value.
  * \param[in] counter ID of the counter from which to fetch the value.
  * \param[out] value Pointer to a buffer where to store the value.
+ * \param[in] size Size of the value buffer.
  * \return MDCS_SUCCESS on success, MDCS_ERROR otherwise.
  */
 int mdcs_remote_counter_fetch(hg_addr_t addr, mdcs_counter_id_t counter, void* value, size_t size);

@@ -3,10 +3,13 @@
  *
  * See COPYRIGHT in top-level directory.
  */
+#include <mdcs/mdcs.h>
 #include "mdcs-rpc.h"
 #include "mdcs-rpc-types.h"
 #include "mdcs-global-data.h"
 #include "mdcs-error.h"
+#include "mdcs-counter-type.h"
+#include "mdcs-counter.h"
 
 extern mdcs_t g_mdcs;
 
@@ -56,6 +59,13 @@ hg_return_t mdcs_rpc_get_counter(hg_handle_t handle)
 
 	} else {
 
+		if(in.size != counter->t->counter_value_size) {
+			MDCS_PRINT_ERROR("Incorrect buffer size provided by client");
+			result = HG_OTHER_ERROR;
+			out.ret = MDCS_ERROR;
+			goto respond;
+		}
+
 		buffer = calloc(1,in.size);
 		if(buffer == NULL) {
 			MDCS_PRINT_ERROR("Could not allocate buffer");
@@ -88,6 +98,7 @@ hg_return_t mdcs_rpc_get_counter(hg_handle_t handle)
 		}
 	}
 
+respond:
 	ret = margo_respond(mid, handle, &out);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_ERROR("Could not respond to RPC");

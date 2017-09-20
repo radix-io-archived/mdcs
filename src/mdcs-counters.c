@@ -22,27 +22,28 @@ static void last_double_reset(
 
 static void last_double_get_value(
 	mdcs_counter_last_double_internal* internal,
-	double* v)
+	mdcs_counter_last_double_value_t* v)
 {
 	*v = internal->value;
 }
 
 static void last_double_push_one(
 	mdcs_counter_last_double_internal* internal,
-	double* v)
+	mdcs_counter_last_double_item_t* item)
 {
-	internal->value = *v;
+	internal->value = *item;
 }
 
 static void last_double_push_multi(
 	mdcs_counter_last_double_internal* internal,
-    double* v, size_t count)
+    mdcs_counter_last_double_item_t* items, size_t count)
 {
-	internal->value = v[count-1];
+	internal->value = items[count-1];
 }
 
 struct mdcs_counter_type_s MDCS_COUNTER_LAST_DOUBLE_S = {
-   	.counter_value_size = sizeof(mdcs_counter_last_double_t), 
+	.counter_item_size  = sizeof(mdcs_counter_last_double_item_t),
+   	.counter_value_size = sizeof(mdcs_counter_last_double_value_t), 
 	.counter_data_size  = sizeof(mdcs_counter_last_double_internal),
     .reset_f            = (mdcs_reset_f)last_double_reset,
     .get_value_f        = (mdcs_get_value_f)last_double_get_value,
@@ -66,27 +67,28 @@ static void last_int64_reset(
 
 static void last_int64_get_value(
 	mdcs_counter_last_int64_internal* internal,
-	int64_t* v)
+	mdcs_counter_last_int64_value_t* v)
 {
 	*v = internal->value;
 }
 
 static void last_int64_push_one(
 	mdcs_counter_last_int64_internal* internal,
-	int64_t* v)
+	mdcs_counter_last_int64_item_t* item)
 {
-	internal->value = *v;
+	internal->value = *item;
 }
 
 static void last_int64_push_multi(
 	mdcs_counter_last_int64_internal* internal,
-	int64_t* v, size_t count)
+	mdcs_counter_last_int64_item_t* items, size_t count)
 {
-	internal->value = v[count-1];
+	internal->value = items[count-1];
 }
 
 struct mdcs_counter_type_s MDCS_COUNTER_LAST_INT64_S = {
-   	.counter_value_size = sizeof(mdcs_counter_last_int64_t), 
+    .counter_item_size  = sizeof(mdcs_counter_last_int64_item_t), 
+  	.counter_value_size = sizeof(mdcs_counter_last_int64_value_t), 
 	.counter_data_size  = sizeof(mdcs_counter_last_int64_internal),
     .reset_f            = (mdcs_reset_f)last_int64_reset,
     .get_value_f        = (mdcs_get_value_f)last_int64_get_value,
@@ -98,7 +100,7 @@ struct mdcs_counter_type_s MDCS_COUNTER_LAST_INT64_S = {
 ////////////////////////////////////////////////////////////////////////////
 // Statistics counter, tracks statistics of double values
 ////////////////////////////////////////////////////////////////////////////
-typedef mdcs_counter_stat_double_t mdcs_counter_stat_double_internal;
+typedef mdcs_counter_stat_double_value_t mdcs_counter_stat_double_internal;
 
 static void stat_double_reset(
 	mdcs_counter_stat_double_internal* internal)
@@ -108,14 +110,14 @@ static void stat_double_reset(
 
 static void stat_double_get_value(
 	mdcs_counter_stat_double_internal* internal,
-	mdcs_counter_stat_double_t* v)
+	mdcs_counter_stat_double_value_t* v)
 {
-	memcpy(v,internal, sizeof(mdcs_counter_stat_double_t));
+	memcpy(v,internal, sizeof(mdcs_counter_stat_double_value_t));
 }
 
 static void stat_double_push_one(
 	mdcs_counter_stat_double_internal* internal,
-	double* v)
+	mdcs_counter_stat_double_item_t* v)
 {
 	double x = *v;
 	internal->last = x;
@@ -142,7 +144,8 @@ static void stat_double_push_one(
 }
 
 struct mdcs_counter_type_s MDCS_COUNTER_STAT_DOUBLE_S = {
-   	.counter_value_size = sizeof(mdcs_counter_stat_double_t), 
+    .counter_item_size  = sizeof(mdcs_counter_stat_double_item_t),
+   	.counter_value_size = sizeof(mdcs_counter_stat_double_value_t), 
 	.counter_data_size  = sizeof(mdcs_counter_stat_double_internal),
     .reset_f            = (mdcs_reset_f)stat_double_reset,
     .get_value_f        = (mdcs_get_value_f)stat_double_get_value,
@@ -154,7 +157,7 @@ struct mdcs_counter_type_s MDCS_COUNTER_STAT_DOUBLE_S = {
 ////////////////////////////////////////////////////////////////////////////
 // Statistics counter, tracks statistics of int64 values
 ////////////////////////////////////////////////////////////////////////////
-typedef mdcs_counter_stat_int64_t mdcs_counter_stat_int64_internal;
+typedef mdcs_counter_stat_int64_value_t mdcs_counter_stat_int64_internal;
 
 static void stat_int64_reset(
 	mdcs_counter_stat_int64_internal* internal)
@@ -164,9 +167,9 @@ static void stat_int64_reset(
 
 static void stat_int64_get_value(
 	mdcs_counter_stat_int64_internal* internal,
-	mdcs_counter_stat_int64_t* v)
+	mdcs_counter_stat_int64_value_t* v)
 {
-	memcpy(v,internal, sizeof(mdcs_counter_stat_int64_t));
+	memcpy(v,internal, sizeof(mdcs_counter_stat_int64_value_t));
 }
 
 static void stat_int64_push_one(
@@ -198,7 +201,8 @@ static void stat_int64_push_one(
 }
 
 struct mdcs_counter_type_s MDCS_COUNTER_STAT_INT64_S = {
-   	.counter_value_size = sizeof(mdcs_counter_stat_int64_t), 
+    .counter_item_size  = sizeof(mdcs_counter_stat_int64_item_t),
+   	.counter_value_size = sizeof(mdcs_counter_stat_int64_value_t),
 	.counter_data_size  = sizeof(mdcs_counter_stat_int64_internal),
     .reset_f            = (mdcs_reset_f)stat_int64_reset,
     .get_value_f        = (mdcs_get_value_f)stat_int64_get_value,

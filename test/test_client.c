@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 
 		int64_t counter_value;
 		mdcs_remote_counter_fetch(svr_addr, cid1, &counter_value, sizeof(counter_value));
-		mdcs_counter_stat_double_t stats;
+		mdcs_counter_stat_double_value_t stats;
 		mdcs_remote_counter_fetch(svr_addr, cid2, &stats, sizeof(stats));
 		range_tracker_value_t range;
 		mdcs_remote_counter_fetch(svr_addr, cid3, &range, sizeof(range));

@@ -11,18 +11,7 @@
 #include "mdcs-rpc.h"
 #include "mdcs-rpc-types.h"
 #include "mdcs-error.h"
-#include "uthash.h"
-
-struct mdcs_counter_s {
-	char* name;             // name of the counter
-	uint64_t id;            // id of the counter
-	mdcs_counter_type_t t;  // counter type (including accessor functions)
-	void* counter_data;     // data attached to the counter
-	void* buffer;			// buffer to hold pushed values
-	size_t max_buffer_size; // maximum number of elements the buffer can hold
-	size_t num_buffered;    // number of elements currently in the buffer
-	UT_hash_handle hh;      // counters are placed in a hash by id
-};
+#include "mdcs-counter.h"
 
 static void dummy_printer(const char* s) {}
 
@@ -71,7 +60,7 @@ int mdcs_finalize()
 		HASH_DEL(g_mdcs->counter_hash, current_counter); 
 		free(current_counter->name);
 		mdcs_counter_type_destroy(current_counter->t);
-		free(current_counter->counter_data);
+		free(current_counter->counter_internal_data);
 		if(current_counter->buffer != NULL) free(current_counter->buffer);
 		free(current_counter);
 	}
@@ -156,7 +145,7 @@ int mdcs_counter_register(const char* name,
 	newcounter->name = strdup(name);
 	newcounter->id = id;
 	newcounter->t = type;
-	newcounter->counter_data = malloc(type->counter_data_size);
+	newcounter->counter_internal_data = malloc(type->counter_data_size);
 	newcounter->buffer = NULL;
 	newcounter->num_buffered = 0;
 	newcounter->max_buffer_size = 0;
@@ -234,7 +223,7 @@ int mdcs_counter_push(mdcs_counter_t counter, const void* value)
 		memcpy(p, value, counter->t->counter_item_size);
 		counter->num_buffered += 1;
 	} else {
-		counter->t->push_one_f(counter->counter_data, value);
+		counter->t->push_one_f(counter->counter_internal_data, value);
 	}
 
 	return MDCS_SUCCESS;
@@ -254,15 +243,16 @@ int mdcs_counter_digest(mdcs_counter_t counter)
 
 	if(counter->num_buffered != 0) {
 		if(counter->t->push_multi_f != NULL) {
-			counter->t->push_multi_f(counter->counter_data, counter->buffer, counter->num_buffered);
+			counter->t->push_multi_f(counter->counter_internal_data, counter->buffer, counter->num_buffered);
 		} else {
 			unsigned i;
 			char* value = counter->buffer;
 			for(i=0; i < counter->num_buffered; i++) {
-				counter->t->push_one_f(counter->counter_data, value);
+				counter->t->push_one_f(counter->counter_internal_data, value);
 				value += counter->t->counter_item_size;
 			}
 		}
+		counter->num_buffered = 0;
 	}
 
 	return MDCS_SUCCESS;
@@ -287,7 +277,7 @@ int mdcs_counter_value(mdcs_counter_t counter, void* value)
 			return MDCS_ERROR;
 		}
 	}
-	counter->t->get_value_f(counter->counter_data, value);
+	counter->t->get_value_f(counter->counter_internal_data, value);
 	
 	return MDCS_SUCCESS;
 }
@@ -304,7 +294,7 @@ int mdcs_counter_reset(mdcs_counter_t counter)
 		return MDCS_ERROR;
 	}
 
-	counter->t->reset_f(counter->counter_data);
+	counter->t->reset_f(counter->counter_internal_data);
 
 	return MDCS_SUCCESS;
 }
