@@ -59,8 +59,8 @@ int mdcs_finalize()
 	HASH_ITER(hh, g_mdcs->counter_hash, current_counter, tmp) {
 		HASH_DEL(g_mdcs->counter_hash, current_counter); 
 		free(current_counter->name);
+		current_counter->t->destroy_f(current_counter->counter_internal_data);
 		mdcs_counter_type_destroy(current_counter->t);
-		free(current_counter->counter_internal_data);
 		if(current_counter->buffer != NULL) free(current_counter->buffer);
 		free(current_counter);
 	}
@@ -71,7 +71,8 @@ int mdcs_finalize()
 	return MDCS_SUCCESS;
 }
 
-int mdcs_counter_type_create(size_t internalsize, size_t valuesize, size_t itemsize,
+int mdcs_counter_type_create(size_t itemsize, size_t valuesize,
+		mdcs_create_f create_fn, mdcs_destroy_f destroy_fn,
         mdcs_reset_f reset_fn, mdcs_push_one_f push_one_fn, 
         mdcs_push_multi_f push_multi_fn, mdcs_get_value_f get_value_fn,
         mdcs_counter_type_t* type) 
@@ -89,7 +90,8 @@ int mdcs_counter_type_create(size_t internalsize, size_t valuesize, size_t items
 
 	newtype->counter_item_size  = itemsize;
 	newtype->counter_value_size = valuesize;
-    newtype->counter_data_size  = internalsize; 
+	newtype->create_f           = create_fn;
+	newtype->destroy_f          = destroy_fn;
     newtype->reset_f            = reset_fn;
     newtype->get_value_f        = get_value_fn;
     newtype->push_one_f         = push_one_fn;
@@ -145,7 +147,7 @@ int mdcs_counter_register(const char* name,
 	newcounter->name = strdup(name);
 	newcounter->id = id;
 	newcounter->t = type;
-	newcounter->counter_internal_data = malloc(type->counter_data_size);
+	newcounter->counter_internal_data = type->create_f();
 	newcounter->buffer = NULL;
 	newcounter->num_buffered = 0;
 	newcounter->max_buffer_size = 0;

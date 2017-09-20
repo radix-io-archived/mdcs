@@ -14,6 +14,16 @@ typedef struct {
 	double value;
 } mdcs_counter_last_double_internal;
 
+static void* last_double_create()
+{
+	return malloc(sizeof(double));
+}
+
+static void last_double_destroy(void* internal)
+{
+	free(internal);
+}
+
 static void last_double_reset(
 	mdcs_counter_last_double_internal* internal)
 {
@@ -44,7 +54,8 @@ static void last_double_push_multi(
 struct mdcs_counter_type_s MDCS_COUNTER_LAST_DOUBLE_S = {
 	.counter_item_size  = sizeof(mdcs_counter_last_double_item_t),
    	.counter_value_size = sizeof(mdcs_counter_last_double_value_t), 
-	.counter_data_size  = sizeof(mdcs_counter_last_double_internal),
+    .create_f           = (mdcs_create_f)last_double_create,
+    .destroy_f          = (mdcs_destroy_f)last_double_destroy,
     .reset_f            = (mdcs_reset_f)last_double_reset,
     .get_value_f        = (mdcs_get_value_f)last_double_get_value,
     .push_one_f         = (mdcs_push_one_f)last_double_push_one,
@@ -58,6 +69,16 @@ struct mdcs_counter_type_s MDCS_COUNTER_LAST_DOUBLE_S = {
 typedef struct {
 	int64_t value;
 } mdcs_counter_last_int64_internal;
+
+static void* last_int64_create()
+{
+	return malloc(sizeof(int64_t));
+}
+
+static void last_int64_destroy(void* internal)
+{
+	free(internal);
+}
 
 static void last_int64_reset(
 	mdcs_counter_last_int64_internal* internal)
@@ -89,7 +110,8 @@ static void last_int64_push_multi(
 struct mdcs_counter_type_s MDCS_COUNTER_LAST_INT64_S = {
     .counter_item_size  = sizeof(mdcs_counter_last_int64_item_t), 
   	.counter_value_size = sizeof(mdcs_counter_last_int64_value_t), 
-	.counter_data_size  = sizeof(mdcs_counter_last_int64_internal),
+	.create_f           = (mdcs_create_f)last_int64_create,
+	.destroy_f          = (mdcs_destroy_f)last_int64_destroy,
     .reset_f            = (mdcs_reset_f)last_int64_reset,
     .get_value_f        = (mdcs_get_value_f)last_int64_get_value,
     .push_one_f         = (mdcs_push_one_f)last_int64_push_one,
@@ -101,6 +123,16 @@ struct mdcs_counter_type_s MDCS_COUNTER_LAST_INT64_S = {
 // Statistics counter, tracks statistics of double values
 ////////////////////////////////////////////////////////////////////////////
 typedef mdcs_counter_stat_double_value_t mdcs_counter_stat_double_internal;
+
+static void* stat_double_create()
+{
+	return malloc(sizeof(mdcs_counter_stat_double_internal));
+}
+
+static void stat_double_destroy(void* internal)
+{
+	free(internal);
+}
 
 static void stat_double_reset(
 	mdcs_counter_stat_double_internal* internal)
@@ -146,7 +178,8 @@ static void stat_double_push_one(
 struct mdcs_counter_type_s MDCS_COUNTER_STAT_DOUBLE_S = {
     .counter_item_size  = sizeof(mdcs_counter_stat_double_item_t),
    	.counter_value_size = sizeof(mdcs_counter_stat_double_value_t), 
-	.counter_data_size  = sizeof(mdcs_counter_stat_double_internal),
+	.create_f           = (mdcs_create_f)stat_double_create,
+    .destroy_f          = (mdcs_destroy_f)stat_double_destroy,
     .reset_f            = (mdcs_reset_f)stat_double_reset,
     .get_value_f        = (mdcs_get_value_f)stat_double_get_value,
     .push_one_f         = (mdcs_push_one_f)stat_double_push_one,
@@ -158,6 +191,16 @@ struct mdcs_counter_type_s MDCS_COUNTER_STAT_DOUBLE_S = {
 // Statistics counter, tracks statistics of int64 values
 ////////////////////////////////////////////////////////////////////////////
 typedef mdcs_counter_stat_int64_value_t mdcs_counter_stat_int64_internal;
+
+static void* stat_int64_create()
+{
+	return malloc(sizeof(mdcs_counter_stat_int64_internal));
+}
+
+static void stat_int64_destroy(void* internal)
+{
+	free(internal);
+}
 
 static void stat_int64_reset(
 	mdcs_counter_stat_int64_internal* internal)
@@ -203,8 +246,9 @@ static void stat_int64_push_one(
 struct mdcs_counter_type_s MDCS_COUNTER_STAT_INT64_S = {
     .counter_item_size  = sizeof(mdcs_counter_stat_int64_item_t),
    	.counter_value_size = sizeof(mdcs_counter_stat_int64_value_t),
-	.counter_data_size  = sizeof(mdcs_counter_stat_int64_internal),
-    .reset_f            = (mdcs_reset_f)stat_int64_reset,
+	.create_f           = (mdcs_create_f)stat_int64_create,
+	.destroy_f          = (mdcs_destroy_f)stat_int64_destroy,
+	.reset_f            = (mdcs_reset_f)stat_int64_reset,
     .get_value_f        = (mdcs_get_value_f)stat_int64_get_value,
     .push_one_f         = (mdcs_push_one_f)stat_int64_push_one,
     .push_multi_f       = (mdcs_push_multi_f)NULL,

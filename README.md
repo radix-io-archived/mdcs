@@ -132,7 +132,9 @@ typedef int32_t  range_tracker_item_t;
 typedef uint32_t range_tracker_value_t;
 ```
 
-Now we also need 4 functions to build our counter types:
+Now we also need 6 functions to build our counter types:
+ * A `create` function to allocate an object of type range_tracker_data_t
+ * A `destroy` function to free such an object
  * A `reset` function to reset the counter's internal value
  * A `push_one` function to push an item to the counter
  * A `push_multi` function to push multiple items to the counter
@@ -141,6 +143,8 @@ Now we also need 4 functions to build our counter types:
 We declare their prototype in the header file `range-tracker.h`:
 
 ```c
+void* range_tracker_create();
+void range_tracker_destroy(void* internal);
 void range_tracker_reset(range_tracker_data_t* data);
 void range_tracker_get_value(range_tracker_data_t* data, range_tracker_value_t* value);
 void range_tracker_push_one(range_tracker_data_t* data, range_tracker_item_t* item);
@@ -152,6 +156,16 @@ We can now define them in an implementation file `range-tracker.c`:
 ```c
 #include <limits.h>
 #include "range-tracker.h"
+
+void* range_tracker_create()
+{
+    return malloc(sizeof(range_tracker_data_t));
+}
+
+void range_tracker_destroy(void* internal)
+{
+    free(internal);
+}
 
 void range_tracker_reset(range_tracker_data_t* data)
 {
@@ -200,7 +214,8 @@ Let's now create our type in the server:
 
     mdcs_counter_type_create(sizeof(range_tracker_item_t),
                              sizeof(range_tracker_value_t),
-                             sizeof(range_tracker_data_t),
+                             (mdcs_create_f)range_tracker_create,
+                             (mdcs_destroy_f)range_tracker_destroy,
                              (mdcs_reset_f)range_tracker_reset,
                              (mdcs_push_one_f)range_tracker_push_one,
                              (mdcs_push_multi_f)range_tracker_push_multi,

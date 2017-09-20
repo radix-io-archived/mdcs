@@ -19,6 +19,8 @@ extern "C" {
 #define MDCS_TRUE    1
 #define MDCS_FALSE   0
 
+typedef void* (*mdcs_create_f)();
+typedef void  (*mdcs_destroy_f)(void*);
 typedef void  (*mdcs_reset_f)(void* counter_data);
 typedef void  (*mdcs_get_value_f)(void* counter_data, void* val);
 typedef void  (*mdcs_push_one_f)(void* counter_data, const void* val);
@@ -87,7 +89,8 @@ int mdcs_set_warning_printer(mdcs_printer_f fun);
  *
  * \param[in] itemsize Size of item pushed to the counter.
  * \param[in] valuesize Size of the value returned when reading the counter.
- * \param[in] datasize Size of the internal data structure of the counter.
+ * \param[in] create_fn Function used to create the counter's internal data.
+ * \param[in] destroy_fn Function used to free the counter's internal data.
  * \param[in] reset_fn Function used to reset the counter.
  * \param[in] push_one_fn Function used to push new values to the counter.
  * \param[in] push_multi_fn Function used to push multiple values to the counter.
@@ -96,7 +99,8 @@ int mdcs_set_warning_printer(mdcs_printer_f fun);
  * \param[out] type Resulting counter type.
  * \return MDCS_SUCCESS on success, MDCS_ERROR otherwise.
  */
-int mdcs_counter_type_create(size_t itemsize, size_t valuesize, size_t datasize,
+int mdcs_counter_type_create(size_t itemsize, size_t valuesize,
+		mdcs_create_f create_fn, mdcs_destroy_f destroy_fn,
         mdcs_reset_f reset_fn, mdcs_push_one_f push_one_fn, 
         mdcs_push_multi_f push_multi_fn, mdcs_get_value_f get_value_fn,
         mdcs_counter_type_t* type);

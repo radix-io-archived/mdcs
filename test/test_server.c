@@ -46,7 +46,8 @@ int main(int argc, char** argv)
 
 	mdcs_counter_type_create(sizeof(range_tracker_item_t),
 	                         sizeof(range_tracker_value_t),
-	                         sizeof(range_tracker_data_t),
+                             (mdcs_create_f)range_tracker_create,
+                             (mdcs_destroy_f)range_tracker_destroy,
 	                         (mdcs_reset_f)range_tracker_reset,
 	                         (mdcs_push_one_f)range_tracker_push_one,
 	                         (mdcs_push_multi_f)range_tracker_push_multi,
