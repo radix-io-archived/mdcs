@@ -99,7 +99,7 @@ hg_return_t mdcs_rpc_get_counter(hg_handle_t handle)
 	}
 
 respond:
-	ret = margo_respond(mid, handle, &out);
+	ret = margo_respond(handle, &out);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_ERROR("Could not respond to RPC");
 		result = ret;
@@ -122,7 +122,7 @@ cleanup:
 		result = ret;
 	}
 
-	ret = margo_destroy(g_mdcs->mid, handle);
+	ret = margo_destroy(handle);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_WARNING("Could not destroy RPC handle");
 		result = ret;
@@ -136,21 +136,14 @@ hg_return_t mdcs_rpc_reset_counter(hg_handle_t handle)
 {
 	hg_return_t result = HG_SUCCESS;
 	int ret = HG_SUCCESS;
-	margo_instance_id mid = MARGO_INSTANCE_NULL; 
 	reset_counter_in_t  in = {
 		.counter_id = 0
 	};
 	reset_counter_out_t out = {
 		.ret = MDCS_SUCCESS
-	};	
+	};
+	
 	mdcs_counter_t counter = MDCS_COUNTER_NULL;
-
-	mid = margo_hg_handle_get_instance(handle);
-	if(mid == MARGO_INSTANCE_NULL) {
-		MDCS_PRINT_ERROR("Could not get a valid Margo instance from handle");
-		result = HG_OTHER_ERROR;
-		goto cleanup;
-	}
 
 	ret = mdcs_counter_find_by_id(in.counter_id, &counter);
 
@@ -159,7 +152,7 @@ hg_return_t mdcs_rpc_reset_counter(hg_handle_t handle)
 	
 	out.ret = ret;
 
-	ret = margo_respond(mid, handle, &out);
+	ret = margo_respond(handle, &out);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_ERROR("Could not send RPC response");
 		result = ret;
@@ -174,7 +167,7 @@ cleanup:
 		result = ret;
 	}
 
-	ret = margo_destroy(g_mdcs->mid, handle);
+	ret = margo_destroy(handle);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_WARNING("Could not destroy RPC handle");
 		result = ret;

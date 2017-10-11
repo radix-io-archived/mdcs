@@ -75,8 +75,6 @@ hg_return_t sum(hg_handle_t h)
 	sum_in_t in;
 	sum_out_t out;
 
-	margo_instance_id mid = margo_hg_handle_get_instance(h);
-
 	/* Deserialize the input from the received handle. */
 	ret = margo_get_input(h, &in);
 	assert(ret == HG_SUCCESS);
@@ -109,7 +107,7 @@ hg_return_t sum(hg_handle_t h)
 	r = mdcs_counter_value(mycounter, &stored);
     printf("Stored counter value is %ld\n", stored);
 
-	ret = margo_respond(mid, h, &out);
+	ret = margo_respond(h, &out);
 	assert(ret == HG_SUCCESS);
 
 	/* Free the input data. */
@@ -117,7 +115,7 @@ hg_return_t sum(hg_handle_t h)
 	assert(ret == HG_SUCCESS);
 
 	/* We are not going to use the handle anymore, so we should destroy it. */
-	ret = margo_destroy(mid, h);
+	ret = margo_destroy(h);
 	assert(ret == HG_SUCCESS);
 
 	return HG_SUCCESS;

@@ -3,6 +3,7 @@
  *
  * See COPYRIGHT in top-level directory.
  */
+#include <string.h>
 #include <mdcs/mdcs.h>
 #include <mdcs/mdcs-counters.h>
 #include "mdcs-counter-type.h"

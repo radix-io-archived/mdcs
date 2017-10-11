@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
 		hg_handle_t h;
 		margo_create(mid, svr_addr, sum_rpc_id, &h);
-		margo_forward(mid, h, &args);
+		margo_forward(h, &args);
 		
 		sum_out_t resp;
 		margo_get_output(h, &resp);
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 		printf("Range value is %d\n", range);
 
 		margo_free_output(h,&resp);
-		margo_destroy(mid, h);
+		margo_destroy(h);
 	}
 
 	/* free the address */

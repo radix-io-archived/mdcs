@@ -49,7 +49,7 @@ int mdcs_remote_counter_fetch(hg_addr_t addr, mdcs_counter_id_t counter, void* v
 		goto cleanup;
 	}
 
-	ret = margo_forward(g_mdcs->mid, handle, &in);
+	ret = margo_forward(handle, &in);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_ERROR("Count not forward RPC");
 		result = MDCS_ERROR;
@@ -75,7 +75,7 @@ cleanup:
 		MDCS_PRINT_WARNING("Coult not free RPC output");
 	}
 
-	ret = margo_destroy(g_mdcs->mid, handle);
+	ret = margo_destroy(handle);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_WARNING("Could not destroy RPC handle");
 	}
@@ -103,7 +103,7 @@ int mdcs_remote_counter_reset(hg_addr_t addr, mdcs_counter_id_t counter)
 		goto cleanup;
 	}
 
-	ret = margo_forward(g_mdcs->mid, handle, &in);
+	ret = margo_forward(handle, &in);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_ERROR("Could not forward RPC");
 		result = MDCS_ERROR;
@@ -124,7 +124,7 @@ cleanup:
 		MDCS_PRINT_WARNING("Could not free output");
 	}
 
-	ret = margo_destroy(g_mdcs->mid, handle);
+	ret = margo_destroy(handle);
 	if(ret != HG_SUCCESS) {
 		MDCS_PRINT_WARNING("Could not free RPC handle");
 	}
