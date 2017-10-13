@@ -1,44 +1,44 @@
-#-----------------------------------------------------------#
-# Copyright (C) 2017 University of Chicago.
-# See COPYRIGHT notice in top-level directory.
-#-----------------------------------------------------------#
-cmake_minimum_required (VERSION 2.8)
+#
+# CMakeLists.txt  top-level cmake file for mdcs
+# 10-Oct-2017  chuck@ece.cmu.edu
+#
 
-#-----------------------------------------------------------#
-# Starting project definition
-#-----------------------------------------------------------#
-project(MDCS)
+#
+#  general cmake flags:
+#    -DCMAKE_INSTALL_PREFIX=/usr/local     -- the prefix for installing
+#    -DCMAKE_BUILD_TYPE=type               -- type can be Debug, Release, ...
+#    -DCMAKE_PREFIX_PATH=/dir              -- external packages
+#
+#     note that CMAKE_PREFIX_PATH can be a list of directories:
+#      -DCMAKE_PREFIX_PATH='/dir1;/dir2;/dir3'
+#
 
-set(CMAKE_C_FLAGS "-g -Wall -Wextra -Wno-unused-parameter")
-#-----------------------------------------------------------#
-# Set the location of CMake Modules
-#-----------------------------------------------------------#
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} 
-		"${MDCS_SOURCE_DIR}/cmake/Modules/")
+cmake_minimum_required (VERSION 3.0)
+project (mdcs C CXX)
+enable_testing ()
 
-if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-	set(CMAKE_INSTALL_PREFIX /usr/local)
-endif(NOT DEFINED CMAKE_INSTALL_PREFIX)
+# add our cmake module directory to the path
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+     "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-find_package(ABT REQUIRED)
-find_package(MERCURY REQUIRED)
-find_package(Boost REQUIRED)
-find_package(MARGO REQUIRED)
+# link shared lib with full rpath
+set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-include_directories(${MERCURY_INCLUDE_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
-include_directories(${ABT_INCLUDE_DIR})
-include_directories(${MARGO_INCLUDE_DIRS})
-#-----------------------------------------------------------#
-include_directories(${MDCS_SOURCE_DIR})
-include_directories(${MDCS_SOURCE_DIR}/include)
-include_directories(${CMAKE_BINARY_DIR})
+# setup cache variables for ccmake
+if (NOT CMAKE_BUILD_TYPE)
+    set (CMAKE_BUILD_TYPE Release
+         CACHE STRING "Choose the type of build." FORCE)
+    set_property (CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS 
+                  "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
+endif ()
+set (CMAKE_PREFIX_PATH "" CACHE STRING "External dependencies path")
+set (BUILD_SHARED_LIBS "OFF" CACHE BOOL "Build a shared library")
 
-#-----------------------------------------------------------#
-# Set subdirectories for the compilation process
-#-----------------------------------------------------------#
-add_subdirectory(lib)
-add_subdirectory(test)
+# packages we depend on
+include (xpkg-import)
+find_package (mercury CONFIG REQUIRED)
+xpkg_import_module (margo REQUIRED margo)
 
-install(FILES "${CMAKE_BINARY_DIR}/lib/libmdcs.a" DESTINATION lib)
-install(DIRECTORY "include/mdcs" DESTINATION include)
+add_subdirectory (src)
+add_subdirectory (test)
