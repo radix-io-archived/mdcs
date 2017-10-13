@@ -20,15 +20,16 @@ Then
 cd mdcs
 mkdir build
 cd build
-cmake .. -G "Unix Makefiles" \
-    -DBOOST=ROOT=/path/to/boost \
-    -DMERCURY_ROOT=/path/to/mercury \
-    -DABT_ROOT=/path/to/argobots \
-    -DMARGO_ROOT=/path/to/margo \
+PKG_CONFIG_PATH=/path/to/lib/pkgconfig cmake .. \
+    -DCMAKE_PREFIX_PATH=/path/where/dependencies/are/installed \
     -DCMAKE_INSTALL_PREFIX=/path/where/to/install/mdcs
 make
 make install
 ```
+
+PKG_CONFIG_PATH must point to the directories where pkgconfig can find
+margo.pc and argobots.pc. CMAKE_PREFIX_PATH must point to directories 
+where Mercury has been installed.
 
 How to use MDCS
 ===============
