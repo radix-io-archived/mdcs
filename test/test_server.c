@@ -39,7 +39,7 @@ int main(int argc, char** argv)
 
 	int ret;
 	
-	ret = mdcs_init(mid, MDCS_TRUE);
+	ret = mdcs_init(mid, MDCS_TRUE, ABT_POOL_NULL);
 	assert(ret == MDCS_SUCCESS);
 
 	mdcs_counter_type_t range_tracker_type = MDCS_COUNTER_TYPE_NULL;

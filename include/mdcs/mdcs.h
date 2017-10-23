@@ -44,9 +44,12 @@ typedef void (*mdcs_printer_f)(const char*);
  *
  * \param[in] mid Initialized margo instance.
  * \param[in] listening MDCS_TRUE if we are listening for queries.
+ * \param[in] pool Argobots pool in which to execute RPC handlers
+ *            associated with MDCS. Relevant on servers only.
+ *            Can be ABT_POOL_NULL.
  * \return MDCS_SUCCESS on success, MDCS_ERROR otherwise.
  */
-int mdcs_init(margo_instance_id mid, int listening);
+int mdcs_init(margo_instance_id mid, int listening, ABT_pool pool);
 
 /**
  * Checks if MDCS is initialized. Flag will be set to 1

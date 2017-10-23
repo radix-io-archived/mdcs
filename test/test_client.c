@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	/* Register a RPC function */
 	hg_id_t sum_rpc_id = MARGO_REGISTER(mid, "sum", sum_in_t, sum_out_t, NULL);
 
-	mdcs_init(mid, MDCS_FALSE);
+	mdcs_init(mid, MDCS_FALSE, ABT_POOL_NULL);
 	
 	/* Lookup the address of the server */
 	hg_addr_t svr_addr;

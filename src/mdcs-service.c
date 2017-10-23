@@ -13,6 +13,8 @@
 #include "mdcs-error.h"
 #include "mdcs-counter.h"
 
+#define MDCS_MPLEX_ID 77686783
+
 static void dummy_printer(const char* s) {}
 
 mdcs_printer_f mdcs_print_error   = dummy_printer; // error printer
@@ -20,7 +22,7 @@ mdcs_printer_f mdcs_print_warning = dummy_printer; // warning printer
 
 mdcs_t g_mdcs = MDCS_NULL;
 
-int mdcs_init(margo_instance_id mid, int listening)
+int mdcs_init(margo_instance_id mid, int listening, ABT_pool pool)
 {
 	mdcs_t newmdcs = (mdcs_t)malloc(sizeof(struct mdcs_data_s));
 	if(newmdcs == NULL) {
@@ -33,10 +35,21 @@ int mdcs_init(margo_instance_id mid, int listening)
 
 	g_mdcs = newmdcs;
 
-	g_mdcs->rpc_fetch_id = MARGO_REGISTER(mid, "mdcs_fetch_counter", 
-							fetch_counter_in_t, fetch_counter_out_t, mdcs_rpc_get_counter);
-	g_mdcs->rpc_reset_id = MARGO_REGISTER(mid, "mdcs_reset_counter",
-							reset_counter_in_t, reset_counter_out_t, mdcs_rpc_reset_counter);
+	if(pool == ABT_POOL_NULL) {
+		pool = *(margo_get_handler_pool(mid));
+	}
+
+	g_mdcs->rpc_fetch_id = MARGO_REGISTER_MPLEX(mid, "mdcs_fetch_counter", 
+						fetch_counter_in_t, 
+						fetch_counter_out_t, 
+						mdcs_rpc_get_counter,
+						MDCS_MPLEX_ID, pool);
+
+	g_mdcs->rpc_reset_id = MARGO_REGISTER_MPLEX(mid, "mdcs_reset_counter",
+						reset_counter_in_t,
+						reset_counter_out_t,
+						mdcs_rpc_reset_counter,
+						MDCS_MPLEX_ID, pool);
 
 	return MDCS_SUCCESS;
 }
@@ -92,11 +105,11 @@ int mdcs_counter_type_create(size_t itemsize, size_t valuesize,
 	newtype->counter_value_size = valuesize;
 	newtype->create_f           = create_fn;
 	newtype->destroy_f          = destroy_fn;
-    newtype->reset_f            = reset_fn;
-    newtype->get_value_f        = get_value_fn;
-    newtype->push_one_f         = push_one_fn;
-    newtype->push_multi_f       = push_multi_fn;
-    newtype->refcount           = 1;
+	newtype->reset_f            = reset_fn;
+	newtype->get_value_f        = get_value_fn;
+	newtype->push_one_f         = push_one_fn;
+	newtype->push_multi_f       = push_multi_fn;
+	newtype->refcount           = 1;
 
 	*type = newtype;
 	return MDCS_SUCCESS; 
