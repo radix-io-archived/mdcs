@@ -13,7 +13,7 @@
 #include "mdcs-error.h"
 #include "mdcs-counter.h"
 
-#define MDCS_MPLEX_ID 77686783
+#define MDCS_PROVIDER_ID 0
 
 static void dummy_printer(const char* s) {}
 
@@ -36,20 +36,20 @@ int mdcs_init(margo_instance_id mid, int listening, ABT_pool pool)
 	g_mdcs = newmdcs;
 
 	if(pool == ABT_POOL_NULL) {
-		pool = *(margo_get_handler_pool(mid));
+		margo_get_handler_pool(mid, &pool);
 	}
 
-	g_mdcs->rpc_fetch_id = MARGO_REGISTER_MPLEX(mid, "mdcs_fetch_counter", 
+	g_mdcs->rpc_fetch_id = MARGO_REGISTER_PROVIDER(mid, "mdcs_fetch_counter", 
 						fetch_counter_in_t, 
 						fetch_counter_out_t, 
 						mdcs_rpc_get_counter,
-						MDCS_MPLEX_ID, pool);
+						MDCS_PROVIDER_ID, pool);
 
-	g_mdcs->rpc_reset_id = MARGO_REGISTER_MPLEX(mid, "mdcs_reset_counter",
+	g_mdcs->rpc_reset_id = MARGO_REGISTER_PROVIDER(mid, "mdcs_reset_counter",
 						reset_counter_in_t,
 						reset_counter_out_t,
 						mdcs_rpc_reset_counter,
-						MDCS_MPLEX_ID, pool);
+						MDCS_PROVIDER_ID, pool);
 
 	return MDCS_SUCCESS;
 }
